@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>India Live Rain Predictor</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            padding: 20px;
+            position: relative;
+            background: #162447; 
+        }
+
+        
+        #bg-video {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1; 
+            object-fit: cover;  
+            opacity: 0.7; 
+        }
+
+        
+        .card {
+            background: rgba(22, 36, 71, 0.4); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            text-align: center;
+            z-index: 1;
+        }
+
+        h1 { font-size: 26px; margin-bottom: 10px; font-weight: 600; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        p.subtitle { font-size: 14px; margin-bottom: 30px; opacity: 0.85; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+
+        label { display: block; text-align: left; margin-bottom: 8px; font-size: 14px; opacity: 0.9; }
+        
+        /* Search Input Box Styling */
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+        input[type="text"]:focus { border-color: #007bff; background: rgba(255, 255, 255, 0.3); }
+        input[type="text"]::placeholder { color: rgba(255, 255, 255, 0.6); }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+        button:hover { background: #0056b3; transform: scale(1.02); }
+
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .stat-box { font-size: 14px; }
+        .stat-box span { display: block; font-size: 18px; font-weight: bold; margin-top: 5px; color: #00f2fe; }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(0, 123, 255, 0.25);
+            border-left: 5px solid #007bff;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: left;
+            line-height: 1.5;
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body>
+
+    <video autoplay loop muted playsinline id="bg-video">
+        <source src="{{ url_for('static', filename='video.mp4') }}" type="video/mp4">
+    </video>
+
+    <div class="card">
+        <h1>🇮🇳 Live Rain Predictor</h1>
+        <p class="subtitle">Type any Indian City/Town to check live rain probability</p>
+
+        <form method="POST">
+            <label for="city">Enter City Name:</label>
+            <input type="text" name="city" id="city" placeholder="E.g. Meerut, Mumbai, Patna..." required autocomplete="off" value="{% if selected_city %}{{ selected_city }}{% endif %}">
+            
+            <button type="submit">Check Live Status</button>
+        </form>
+
+        {% if weather %}
+            <div class="stats">
+                <div class="stat-box">Temp <span>{{ weather.temp }}°C</span></div>
+                <div class="stat-box">Humidity <span>{{ weather.humidity }}%</span></div>
+                <div class="stat-box">Clouds <span>{{ weather.cloud }}%</span></div>
+            </div>
+        {% endif %}
+
+        {% if prediction %}
+            <div class="result-box">
+                {% if weather %}
+                    <strong>Location Found:</strong> {{ weather.resolved_name }}<br><br>
+                {% endif %}
+                <strong>Prediction:</strong> {{ prediction }}
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
